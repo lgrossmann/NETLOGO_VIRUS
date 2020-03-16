@@ -1,6 +1,12 @@
 # NETLOGO_VIRUS
 Netlogo Virus Agent-Based-Model (ABM) with Social Distancing Component.
 
+You can grab the NetLogo file and either use it with the Desktop Application of NetLogo tested in version 6.1.1 or upload the file to the browser based version **which is a lot slower**, and run directly.
+https://netlogoweb.org/
+
+
+
+
 WHAT IS IT?
 This model simulates the transmission and perpetuation of a virus in a human population.
 
