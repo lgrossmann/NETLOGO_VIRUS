@@ -28,6 +28,8 @@ The SYMPTOM-FREE-PERIOD-DAYS slider controls how long it takes for an individual
 
 The ADHERENCE-TO-SOCIAL-DISTANCING slider determines the general percentage of people keeping their distance. The remainder is still able to spread the disease further by moving to the same patch as another.
 
+*The HANDWASHING slider determines the overall likelihood of people "washing their hands" (i.e. agents wash the patch) after reaching a patch that has been contaminated by another infected or sick individual. Whoever does not wash their hands becomes infected in this model.*
+
 The SETUP button resets the graphics and plots and randomly distributes NUMBER-PEOPLE in the view. All but 10% of the people are set to be "green" HEALTHY people and 10% "blue" INFECTED people (of randomly distributed ages). The GO button starts the simulation and the plotting function.
 
 The TURTLE-SHAPE chooser controls whether the people are visualized as person shapes or as circles.
