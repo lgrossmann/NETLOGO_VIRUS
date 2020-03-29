@@ -6,7 +6,11 @@ turtles-own
     number-asymptomatic-days ;; how long in days before an infected turtle gets sick
     age                  ;; in days
     d                    ;; distance to other turtles
-]
+ ]
+
+patches-own 
+[ infectious-time ]     ;; how long a patch is already infectious until patch-survival threshold.
+                        ;; PATCH COLORS: Violet: infectious. Black: neutral.
 
 globals
   [ %infected            ;; what % of the population is infected and infectious
@@ -17,6 +21,8 @@ globals
     carrying-capacity    ;; the number of turtles that can be in the world at one time
     sick-duration        ;; how long from the onset of sickness with symptoms to the heal or die decision point
     ;;handwashing          ;; probability of a healthy person cleaning the current patch from the germs left by an infected individual
+    ;infectious-time
+    patch-survival
    ]
 
 ;; The setup is divided into four procedures
@@ -24,6 +30,7 @@ to setup
   clear-all
   setup-constants
   setup-turtles
+  setup-patches
   update-global-variables
   update-display
   reset-ticks
@@ -46,6 +53,12 @@ to setup-turtles
     [ get-infected ]
 end
 
+to setup-patches
+  ask patches [
+  set infectious-time 0
+    set pcolor black ]
+end
+  
 to get-infected ;; turtle procedure
   set infected? true
   set remaining-immunity 0
@@ -76,6 +89,7 @@ to setup-constants
   set carrying-capacity 300      ;; max no turtles
   set chance-newcomer 0.5        ;; set to 0 if no reproduction desired
   set sick-duration 40           ;; how long one stays sick in this model
+  set patch-survival 30
 
 end
 
@@ -85,9 +99,13 @@ to go
     move
     if sick? [ recover-or-die ]
     ifelse infected? [ infect ] [ add-newcomer ]
-  ]
+ ]
+  ask patches with [pcolor = violet]  
+      [ ifelse infectious-time > patch-survival [ set pcolor black set infectious-time 0 ] [ set infectious-time infectious-time + 1 ] ]
+  
   update-global-variables
   update-display
+
   tick
 end
 
@@ -130,7 +148,7 @@ to move ;; turtle procedure
     rt random 100
     lt random 100
     fd 1]
-  ;; save to move around
+  ;; safe to move around
   if d >= 1
     [
     rt random 100
@@ -142,16 +160,17 @@ to move ;; turtle procedure
 
   ;;The turtles are asked if their patch is infected. If so, either their "wash their hands" or get infected
   ask turtles with [ not sick? and not infected? ]
-    [ if pcolor = violet and random-float 100 < handwashing [set pcolor black]]
+    [ if pcolor = violet and random-float 100 < handwashing [set pcolor black]
+      if pcolor = violet and random-float 100 > handwashing [get-infected] ]
 end
-
+  
 ;; If a turtle is sick or infected, it infects other turtles on the same patch.
 ;; Immune turtles don't get sick.
 to infect ;; turtle procedure
   ask other turtles-here with [ not sick? and not immune? and not infected? ] ;; ask the healthy, not immune ones
     [ if random-float 100 < infectiousness
       [ get-infected ]
-       ]
+    ]
 end
 
 ;; Once the turtle has been sick long enough, it
@@ -182,7 +201,3 @@ end
 to startup
   setup-constants ;; so that carrying-capacity can be used as upper bound of number-people slider
 end
-
-
-; Copyright 1998 Uri Wilensky.
-; See Info tab for full copyright and license.
